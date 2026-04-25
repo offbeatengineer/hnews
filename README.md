@@ -4,6 +4,9 @@ A minimalist, premium Hacker News client.
 
 ![HN](./screenshot.png)
 
+> ### Built with AI
+> This entire project was written using [pi](https://pi.dev) and [Qwen3.6-27B](https://huggingface.co/unsloth/Qwen3.6-27B-GGUF) (the [UD-Q8_K_XL](https://huggingface.co/unsloth/Qwen3.6-27B-GGUF) quantization by Unsloth). The full session transcript is available at [offbeatengineer.com/labs/session-hnews](https://offbeatengineer.com/labs/session-hnews).
+
 ## Features
 
 - **Single binary** — everything bundled, zero runtime dependencies
