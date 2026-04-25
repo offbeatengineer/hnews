@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
@@ -17,7 +18,17 @@ import (
 //go:embed frontend/*
 var frontendFS embed.FS
 
+// Set by goreleaser ldflags
+var version = "dev"
+
 func main() {
+	versionFlag := flag.Bool("version", false, "print version")
+	flag.Parse()
+	if *versionFlag {
+		fmt.Printf("hnews version %s\n", version)
+		return
+	}
+
 	// Determine port
 	port := os.Getenv("HNEWS_PORT")
 	if port == "" {

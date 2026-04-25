@@ -1,0 +1,65 @@
+version: 2
+
+project_name: hnews
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - binary: hnews
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - formats:
+      - tar.gz
+    name_template: >-
+      {{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}
+    format_overrides:
+      - goos: darwin
+        formats:
+          - zip
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore"
+      - "merge conflict"
+      - "^Merge"
+
+homebrew_casks:
+  - name: hnews
+    repository:
+      owner: offbeatengineer
+      name: homebrew-tap
+      branch: main
+    commit_author:
+      name: zhiyand
+      email: zhiyan@users.noreply.github.com
+    directory: Casks
+    homepage: "https://github.com/offbeatengineer/hnews"
+    description: "A minimalist, premium Hacker News client"
+    binaries:
+      - hnews
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/hnews"]
+          end
