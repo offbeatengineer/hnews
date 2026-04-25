@@ -20,47 +20,44 @@ builds:
       - -s -w -X main.version={{.Version}}
 
 archives:
-  - formats:
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    formats:
       - tar.gz
-    name_template: >-
-      {{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}
-    format_overrides:
-      - goos: darwin
-        formats:
-          - zip
 
 checksum:
   name_template: "checksums.txt"
 
+snapshot:
+  version_template: "{{ .Tag }}-next"
+
 changelog:
+  use: github
   sort: asc
   filters:
     exclude:
       - "^docs:"
+      - "^chore:"
       - "^test:"
       - "^ci:"
-      - "^chore"
-      - "merge conflict"
-      - "^Merge"
+      - "^Merge pull request"
 
-homebrew_casks:
+release:
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"
+
+brews:
   - name: hnews
     repository:
       owner: offbeatengineer
       name: homebrew-tap
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    commit_author:
-      name: zhiyand
-      email: zhiyan@users.noreply.github.com
-    directory: Casks
+    directory: Formula
     homepage: "https://github.com/offbeatengineer/hnews"
     description: "A minimalist, premium Hacker News client"
-    binaries:
-      - hnews
-    hooks:
-      post:
-        install: |
-          if OS.mac?
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/hnews"]
-          end
+    license: MIT
+    install: |
+      bin.install "hnews"
+    test: |
+      system "#{bin}/hnews", "--version"
