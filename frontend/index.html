@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HN</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <button class="logo" onclick="navigate('home')" aria-label="Home">
+          <span class="logo-mark">◆</span>
+          <span class="logo-text">Hacker News</span>
+        </button>
+        <nav class="nav">
+          <button class="nav-btn active" data-page="top" onclick="navigate('top')">Top</button>
+          <button class="nav-btn" data-page="new" onclick="navigate('new')">New</button>
+          <button class="nav-btn" data-page="show" onclick="navigate('show')">Show</button>
+          <button class="nav-btn" data-page="ask" onclick="navigate('ask')">Ask</button>
+          <button class="nav-btn" data-page="jobs" onclick="navigate('jobs')">Jobs</button>
+        </nav>
+        <div class="header-actions">
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search stories…" onkeydown="handleSearchKey(event)" autocomplete="off">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main" id="mainContent">
+      <!-- Content injected by JS -->
+    </main>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Backdrop for mobile nav -->
+    <div class="backdrop" id="backdrop" hidden onclick="closeStory()"></div>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+      <span>Built with ♥ for readers</span>
+      <div class="footer-shortcuts">
+        <span class="footer-shortcut"><kbd class="kbd-hint">/</kbd> Search</span>
+        <span class="footer-shortcut"><kbd class="kbd-hint">Esc</kbd> Back</span>
+        <span class="footer-shortcut"><kbd class="kbd-hint">n</kbd> Refresh</span>
+      </div>
+    </footer>
+  </div>
+
+  <template id="story-list-template">
+    <div class="feed">
+      <div class="feed-header">
+        <h1 class="feed-title" id="feedTitle">Top Stories</h1>
+        <span class="feed-subtitle" id="feedSubtitle"></span>
+      </div>
+      <div class="story-list" id="storyList"></div>
+      <div class="load-more-wrap" id="loadMoreWrap" hidden>
+        <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()">Load more stories</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="story-detail-template">
+    <div class="story-detail" id="storyDetail">
+      <div class="detail-back-wrap">
+        <button class="back-btn" onclick="closeStory()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          <span>Back to feed</span>
+        </button>
+      </div>
+      <article class="detail-article" id="detailArticle">
+        <!-- Filled by JS -->
+      </article>
+      <section class="comments-section" id="commentsSection">
+        <h2 class="comments-title" id="commentsTitle"></h2>
+        <div class="comments-list" id="commentsList">
+          <div class="comments-loading">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </template>
+
+  <template id="story-card-template">
+    <article class="story-card">
+      <div class="story-card-inner">
+        <div class="story-rank"></div>
+        <div class="story-card-content">
+          <div class="story-meta">
+            <span class="story-domain"></span>
+            <span class="story-meta-sep">·</span>
+            <span class="story-age"></span>
+            <span class="story-meta-sep">·</span>
+            <span class="story-author"></span>
+          </div>
+          <h2 class="story-title"></h2>
+          <div class="story-stats">
+            <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M7 10v12"/><path d="M15 5.88 14 12h5.93l-1.05 6.39-8.89 5.24-8.89-5.24L5.07 12H11l-1.06-6.12"/><path d="m15 5.88 1-6.12"/></svg> <span class="stat-points"></span></span>
+            <span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span class="stat-comments"></span></span>
+            <button class="story-url-btn" title="Open in browser">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <template id="comment-template">
+    <div class="comment">
+      <div class="comment-header">
+        <span class="comment-author"></span>
+        <span class="comment-time"></span>
+      </div>
+      <div class="comment-body"></div>
+      <div class="comment-children" hidden></div>
+    </div>
+  </template>
+
+  <template id="search-results-template">
+    <div class="feed">
+      <div class="feed-header">
+        <h1 class="feed-title">Search Results</h1>
+        <span class="feed-subtitle" id="searchSubtitle"></span>
+      </div>
+      <div class="story-list" id="storyList"></div>
+    </div>
+  </template>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

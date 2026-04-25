@@ -1,0 +1,4 @@
+hnews
+*.tar.gz
+*.zip
+vendor/
