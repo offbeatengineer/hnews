@@ -48,6 +48,9 @@ release:
 
 brews:
   - name: hnews
+    commit_author:
+      name: Zhiyan Duan
+      email: zhiyan@offbeatengineer.com
     repository:
       owner: offbeatengineer
       name: homebrew-tap
