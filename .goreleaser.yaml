@@ -49,6 +49,7 @@ homebrew_casks:
       owner: offbeatengineer
       name: homebrew-tap
       branch: main
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     commit_author:
       name: zhiyand
       email: zhiyan@users.noreply.github.com
